@@ -3,15 +3,10 @@ const app = express();
 const fs = require('fs');
 
 app.use(express.json())
-
-app.get('/', (req, res) => {
-  res.status(200).send(`hello world`)
-  console.log(req.body);
-})
-
-app.get('/books', (req, res) => {  
+const helper = (filename) =>
+{
   let result = []
-  let bookData = fs.readFileSync('./dummy.csv', 'utf8')
+  let bookData = fs.readFileSync(filename, 'utf8')
   bookData = bookData.split("\n")
   bookData.shift()  // shift removes first element of array because we don't need headers
 
@@ -25,13 +20,23 @@ app.get('/books', (req, res) => {
     }
     result.push(temp)
   }
+  return result;
+}
+app.get('/', (req, res) => {
+  res.status(200).send(`hello world`)
+  console.log(req.body);
+})
+
+app.get('/books', (req, res) => {  
+  let result = helper('./dummy.csv')
+  console.log(result)
 
   res.status(200).send(result)
 })
 
 
 app.post('/books', (req, res) => {
- 
+
   
 })
 
