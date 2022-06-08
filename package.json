@@ -1,0 +1,28 @@
+{
+  "name": "sdi-blended-workshop-express-scaffold",
+  "version": "1.0.0",
+  "description": "For this activity, you will fulfill the following requirements:",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --watch",
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lenders-game/sdi-blended-workshop-express-scaffold.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lenders-game/sdi-blended-workshop-express-scaffold/issues"
+  },
+  "homepage": "https://github.com/lenders-game/sdi-blended-workshop-express-scaffold#readme",
+  "devDependencies": {
+    "jest": "^28.1.1",
+    "supertest": "^6.2.3"
+  },
+  "dependencies": {
+    "express": "^4.18.1"
+  }
+}
