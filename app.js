@@ -36,10 +36,23 @@ app.get('/books', (req, res) => {
 })
 
 app.post('/books', (req, res) => {
-  let newBookStr = `"${req.body.id}","${req.body.title}","${req.body.author}","${req.body.cover}"`
-  fs.appendFileSync('dummy.csv', "\n" + newBookStr)   // for dummy.csv
-  fs.writeFileSync(`./data/${req.body.id}.csv`, newBookStr)   // for new csv   
-  res.status(201).send(newBookStr);  
+  let bookInArr = false;
+  let index = (req.body.id-1)
+  console.log(index);
+  let temp = helper(`dummy.csv`);
+  if (temp.length > index)
+    bookInArr = true;
+  if (!bookInArr)
+  {
+    let newBookStr = `"${req.body.id}","${req.body.title}","${req.body.author}","${req.body.cover}"`
+    fs.appendFileSync('dummy.csv', "\n" + newBookStr)   // for dummy.csv
+    fs.writeFileSync(`./data/${req.body.id}.csv`, newBookStr)   // for new csv   
+    res.status(201).send(newBookStr);  
+    
+  } else {
+    res.status(402).send({message: 'something did not work'});
+  }
+  
 })
 
 app.get('/books/:id', (req, res) => {
