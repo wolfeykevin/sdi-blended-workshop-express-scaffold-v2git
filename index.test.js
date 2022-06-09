@@ -1,10 +1,21 @@
 const req = require('supertest');
 const app = require('./app')
+const fs = require('fs')
 
 
 describe('/books endpoint', () => {
-  test('GET /books should return an array of all books', (done)  => {
+    beforeEach(()=> {
+        // resets dummy.csv after each test completes
+        let temp = fs.readFileSync(`dummy copy.csv`, 'utf8')
+        fs.writeFileSync('dummy.csv', temp)
+        
+        // resets individual id.csv file after each test completes
+        fs.rmSync('./data', { recursive: true, force: true })
+        fs.cpSync('./data-copy', './data' , {force: true, recursive: true})     // recursive and force mean keep trying and overwrite existing file/dir
+        
 
+    })
+  test('should return an array of all books using GET request on /books endpoint', (done)  => {
     req(app)
       .get('/books')
       .expect(200)    // this expect is asyncronous
@@ -14,16 +25,77 @@ describe('/books endpoint', () => {
         done()
       })
   })
+
+  // POST adds something to server
+  test('should append a new book to dummy.csv and create a new csv using POST request on /books endpoint', (done)  => {
+    const oldData = fs.readFileSync('dummy.csv', 'utf8')
+    req(app)
+      .post('/books')
+      .send(newBook)
+      .expect(201)    // this expect is asyncronous
+      .end((err, res) => {
+        if (err) throw err;
+        const newData = fs.readFileSync('dummy.csv', 'utf8');
+        expect(oldData.length < newData.length).toBe(true);
+        done()
+      })
+  })
+  
+  test('should retrieve data on specified book in GET request', (done) => {
+      req(app)
+        .get('/books/1')
+        .expect(200)
+        .end((err, res) => {
+            if (err) throw err;
+            done()  // test completion
+        })
+  })
+
+    test('should update a book using PATCH request on /books/:id endpoint and send back updated book', (done) => {
+        req(app)
+        .patch('/books/1')
+        .send(temp[0])
+        .expect(201)     
+        .end((err, res) => {
+            if (err) throw err;
+            done()  
+      })
+    })
+
+    test('should delete a book using DELETE request on /books/:id endpoint and send back a confirmation message', (done) => {
+        req(app)
+        .delete('/books/5')
+        .expect(200)     
+        .end((err, res) => {
+            if (err) throw err;
+            done()  
+        })
+    })
 })
 
+const newBook = {
+    "id" : 11,
+    "title" : "The Hobbit",
+    "author" : "J.R.R Tolkien",
+    "genre" : "Fantasy",
+    "synopsis" : "If you care for journeys there and back, out of the comfortable Western world, over the edge of the Wild, and home again, and can take an interest in a humble hero (blessed with a little wisdom and a little courage and considerable good luck), here is a record of such a journey and such a traveler.",
+    "cover" : "https://images-na.ssl-images-amazon.com/images/I/419UGp1CsQL._SX331_BO1,204,203,200_.jpg"
+}
+
+const patchedBook =   {
+    "id": 2,
+    "title": "Ender Game",
+    "author": "Ryan Guinter",
+    "cover": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1532714506i/40961427.jpg"
+}
 
 
-
-const temp = [
+const temp = 
+[
   {
       "id": 1,
       "title": "1984",
-      "author": "George Orwell",
+      "author": "Orwell, George ",
       "cover": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1532714506i/40961427.jpg"
   },
   {
